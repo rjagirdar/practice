@@ -4,7 +4,7 @@ public class RodCutting {
 	
 	public static void main(String[] args){
 		int[] values = {1, 5, 8, 9, 10, 17, 17, 20};
-		int n = 8;
+		int n = 3;
 		System.out.println("Max Price to cut rod of length "+n+" is "+numOfWays(n, values));
 				
 	}

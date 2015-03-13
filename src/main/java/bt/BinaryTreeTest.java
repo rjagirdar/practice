@@ -1,10 +1,20 @@
 package bt;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 import java.util.Stack;
+import java.util.TreeMap;
+
+import com.google.common.collect.ImmutableMap;
 
 
 
@@ -20,7 +30,6 @@ public class BinaryTreeTest {
 		bstTree.printInorder();
 		
 		System.out.println();
-		System.out.println();
 		System.out.println("Check if tree contains given element");
 		System.out.println("Is 8 present?: "+ bstTree.contains(8));
 		if(bstTree.contains(3)){
@@ -30,7 +39,6 @@ public class BinaryTreeTest {
 		System.out.println();
 		
 		
-		System.out.println();
 		System.out.println();
 		System.out.println("LinkedList Creation and Traversal");
  		Node listHead = bstTree.getLinkedList();
@@ -46,13 +54,34 @@ public class BinaryTreeTest {
 		System.out.println("Left Leaves Sum is "+tree.leftLeavesSum());
 		
 		System.out.println();
-		System.out.println();
 		System.out.println("Prune Tree");
  		BinaryTree pruneTree = getPruneTree();
 		pruneTree = pruneTree.pruneLeavesonLeangth(4);
 		pruneTree.printInorder();
 		System.out.println();
 		
+		
+		System.out.println();
+		System.out.println("Closest Leaf");
+ 		BinaryTree closestLeafTree = getClosestLeafTree();
+ 		char closestLeaf = (char)closestLeafTree.closestLeaf('H');
+		System.out.println("Closest Leaf of H is "+closestLeaf);
+		System.out.println();
+		
+		
+		System.out.println();
+		System.out.println("Diagonal Sum");
+ 		Collection<Integer> coll = tree.diagonalSum();
+ 		for(Integer val : coll){
+ 			System.out.print(val+" ");
+ 		}
+		System.out.println();
+		
+		tree.topView();
+		tree.bottomView();
+		
+		System.out.println();
+		tree.inorderPredecessorandSuccessor(7);
 		
 	}
 	
@@ -73,17 +102,49 @@ public class BinaryTreeTest {
 		return new BinaryTree(root);
 	}
 	
+	private static BinaryTree getClosestLeafTree(){
+		Node root = new Node('A');
+		
+		root.left = new Node('B');
+		root.right = new Node('C');
+		
+		root.right.left = new Node('E');
+		root.right.right = new Node('F');
+		
+		root.right.left.left = new Node('G');
+		root.right.left.left.left = new Node('I');
+		root.right.left.left.right = new Node('J');
+		
+		root.right.right.right = new Node('H');
+		root.right.right.right.left = new Node('K');
+		
+		return new BinaryTree(root);
+	}
+	
 	private static class Node{
 		public int data;
 		public Node left;
 		public Node right;
 		public int height;
+		public int vd;
+		public int hd;
+		
+		public Node(){
+			this.data= -1;
+			this.left = null;
+			this.right = null;
+			this.height =1;
+			this.vd=-1;
+			this.hd=-1;
+		}
 		
 		public Node(int data){
 			this.data= data;
 			this.left = null;
 			this.right = null;
 			this.height =1;
+			this.vd=-1;
+			this.hd=-1;
 		}
 		
 		public Node(Node temp){
@@ -91,6 +152,8 @@ public class BinaryTreeTest {
 			this.left = null;
 			this.right = null;
 			this.height =1;
+			this.vd=-1;
+			this.hd=-1;
 		}
 
 		public static Comparator<Node> nodeComparator = new Comparator<BinaryTreeTest.Node>() {
@@ -108,10 +171,15 @@ public class BinaryTreeTest {
 		private Node listHead;
 		private Node prev;
 		
+		private Node closestLeaf;
+		private int closestLeafDepth;
+		
 		public BinaryTree(){
 			this.root = null;
 			this.listHead = null;
 			this.prev =null;
+			this.closestLeaf = null;
+			this.closestLeafDepth = Integer.MAX_VALUE;
 			
 		}
 		
@@ -119,12 +187,16 @@ public class BinaryTreeTest {
 			this.root = deepCopyUtil(root);
 			this.prev =null;
 			this.listHead = null;
+			this.closestLeaf = null;
+			this.closestLeafDepth = Integer.MAX_VALUE;
 		}
 		
 		public BinaryTree(int[] arr){
 			this.root = consturctFullBinaryTreeFromArray(arr);
 			this.prev =null;
 			this.listHead = null;
+			this.closestLeaf = null;
+			this.closestLeafDepth = Integer.MAX_VALUE;
 			printInorderUtil(root);
 		}
 		
@@ -165,6 +237,157 @@ public class BinaryTreeTest {
 			getLinkedListUtil(root.right);
 		}
 		
+		/***
+		 * Diagonal Sum
+		 */
+		
+		public Collection<Integer> diagonalSum(){
+			
+			Queue<Node> queue = new LinkedList<BinaryTreeTest.Node>();
+			TreeMap<Integer, Integer> map = new TreeMap<Integer, Integer>();
+			
+			queue.add(root);
+			root.vd = 0;
+			
+			while(!queue.isEmpty()){
+				
+				Node current = queue.poll();
+				
+				int vd = current.vd;
+				
+				while(current!=null){
+					
+					int previous_sum = map.get(vd) == null ? 0 : map.get(vd);
+					map.put(vd, previous_sum+current.data);
+					
+					if(current.left!=null){
+						current.left.vd=vd+1;
+						queue.add(current.left);
+					}
+					current = current.right;
+				}
+			}
+			
+			return map.values();
+		}
+		
+		
+		/***
+		 * Top View of the Binary Tree
+		 */
+		public void topView(){
+			Queue<Node> queue = new LinkedList<BinaryTreeTest.Node>();
+			TreeMap<Integer, Integer> map = new TreeMap<Integer, Integer>();
+			topView(root, map, 0);
+			Collection<Integer> topViewColl = map.values();
+			System.out.println();
+			System.out.println("Top View of the Binary Tree");
+			for(int val:topViewColl){
+				System.out.print(val+" ");
+			}
+		}
+		
+		private void topView(Node root, Map<Integer, Integer> map, int hd){
+			
+			if(root==null)
+				return;
+			if(!map.containsKey(hd)){
+				map.put(new Integer(hd), root.data);
+			}
+			topView(root.left, map, hd-1);
+			topView(root.right, map, hd+1);
+		}
+		
+		
+		/***
+		 * Bottom View
+		 */
+		public void bottomView()
+	    {
+	        if (root == null)
+	            return;
+	        int hd = 0;
+	        Map<Integer, Integer> map = new TreeMap<>();
+	        Queue<Node> queue = new LinkedList<Node>();
+	        root.hd = hd;
+	        queue.add(root);
+	        while (!queue.isEmpty())
+	        {
+	        	Node temp = queue.remove();
+	            hd = temp.hd;
+	            map.put(hd, temp.data);
+	            if (temp.left != null)
+	            {
+	                temp.left.hd = hd-1;
+	                queue.add(temp.left);
+	            }
+	            if (temp.right != null)
+	            {
+	                temp.right.hd = hd+1;
+	                queue.add(temp.right);
+	            }
+	        }
+	 
+	        
+	        Set<Entry<Integer, Integer>> set = map.entrySet();
+	 
+	        
+	        Iterator<Entry<Integer, Integer>> iterator = set.iterator();
+	 
+	        
+	        System.out.println();
+	        System.out.println("Bottom View");
+	        while (iterator.hasNext())
+	        {
+	            Map.Entry<Integer, Integer> me = iterator.next();
+	            System.out.print(me.getValue()+" ");
+	        }
+	    }
+		
+		/***
+		 * Inorder Predecessor and Successor
+		 */
+		
+		public Node[] inorderPredecessorandSuccessor(int key){
+			
+			Node prev = new Node();
+			Node succ = new Node();
+			Node localPrev = new Node();
+			
+			boolean found = inorderPredecessorandSuccessor(root, prev, succ, key, localPrev);
+			if(found){
+				System.out.println();
+				System.out.println("Inorder Predecessor is "+prev.data);
+				System.out.println("Inorder Successor is "+succ.data);
+			}
+			else
+				System.out.println("Given Key not present");
+			
+			return null;
+		}
+		
+		private boolean inorderPredecessorandSuccessor(Node root, Node prev, Node succ, int key, Node localPrev){
+			if(root == null)
+				return false;
+			boolean retVal = false;
+			boolean leftFound = inorderPredecessorandSuccessor(root.left, prev, succ, key,localPrev);
+			if(localPrev.data!=-1 && localPrev.data==key){
+				succ.data = root.data;
+			}
+			if(root.data == key){
+				prev.data = localPrev.data;
+				retVal = true;
+			}
+			localPrev.data = root.data;
+			boolean rightFound = inorderPredecessorandSuccessor(root.right, prev, succ, key, localPrev);
+					
+					
+			if(leftFound || rightFound){
+				retVal =true;
+			}
+			
+			return retVal;
+		}
 		
 		/***
 		 * 
@@ -214,6 +437,12 @@ public class BinaryTreeTest {
 			return root;
 		}
 		
+		
+		
+		/*
+		 * Left Leaves Sum
+		 */
+		
 		public int leftLeavesSum(){
 			return this.leftLeavesSum(root, false, 0);
 		}
@@ -230,6 +459,47 @@ public class BinaryTreeTest {
 					return 0;
 			}
 			return sum+leftLeavesSum(root.left, true, sum) + leftLeavesSum(root.right, false, sum);
+		}
+		
+		
+		
+		/***
+		 * Closest Leaf
+		 */
+		public int closestLeaf(char key){
+			Stack<Node> path = new Stack<BinaryTreeTest.Node>();
+			boolean found = findNodeUtil(root, key, path);
+			Node finalClosestLeaf = null;
+			int finalClosestDepth = Integer.MAX_VALUE;
+			int i=0;
+			if(found){
+				while(!path.isEmpty()){
+					closestLeaf(path.pop(), 0);
+					if(this.closestLeafDepth+i < finalClosestDepth){
+						finalClosestDepth = this.closestLeafDepth;
+						finalClosestLeaf = this.closestLeaf;
+					}
+					i++;
+				}
+				
+			}
+			
+			return finalClosestLeaf.data;
+		}
+		
+		private void closestLeaf(Node root, int depth){
+			if(root==null)
+				return;
+			
+			if(root.left == null && root.right == null){
+				if(this.closestLeafDepth==Integer.MAX_VALUE || depth<this.closestLeafDepth){
+					this.closestLeafDepth = depth;
+					this.closestLeaf = root;
+					return;
+				}
+			}
+			closestLeaf(root.left, depth+1);
+			closestLeaf(root.right, depth+1);
 		}
 		
 		/***
