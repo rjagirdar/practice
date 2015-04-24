@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeMap;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 
 
@@ -35,7 +36,7 @@ public class BinaryTreeTest {
 		if(bstTree.contains(3)){
 			System.out.println("Level of node 3 is "+bstTree.getLevel(3));
 		}
-		System.out.println("Tree is Complete?: "+bstTree.isCompleteBinaryTree());
+		System.out.println("Tree is Complete?: "+bstTree.isfullBinaryTree());
 		System.out.println();
 		
 		
@@ -78,12 +79,118 @@ public class BinaryTreeTest {
 		System.out.println();
 		
 		tree.topView();
-		tree.bottomView();
+		tree.bottomViewRecur();
 		
 		System.out.println();
 		tree.inorderPredecessorandSuccessor(7);
+		System.out.println();
+		
+		System.out.println();
+		System.out.println("Remove Half Nodes");
+		BinaryTree newTree = getRemoveNodesBinaryTree();
+		newTree.removeHalfNodes();
+		bstTree = newTree.getBST();
+		System.out.println();
+		bstTree.printInorder();
+		System.out.println();
+		/*Node reverseList = bstTree.reverseLinkedList();
+		temp =reverseList;
+		while(temp!=null){
+			System.out.print(temp.data+" ");
+			temp=temp.left;
+		}
+		System.out.println();*/
+		
+		System.out.println();
+		System.out.println("Vertex Cover");
+		BinaryTree vcTree = getVertexCoverTree();
+		System.out.println(vcTree.getVertexCover());
+		System.out.println(bstTree.getVertexCover());
+		
+		
+		System.out.println();
+		System.out.println("Serialized Form and Deserialization");
+		System.out.println(bstTree.serialize());
+		String serializedForm = bstTree.serialize();
+		bstTree = bstTree.deserialize(serializedForm);
+		System.out.println();
+		
+		System.out.println(tree.areCousins(4, 6));
+		
+		System.out.println();
+		System.out.println("Max Sum path between 2 leaves");
+		BinaryTree mspTree = getMaxSumBetweenTwoLeavesTree();
+		System.out.println(mspTree.getMaxPathSumBetweenLeaves());
+		
+		System.out.println();
+		System.out.println("Diameter of the tree is "+mspTree.getDiameter());
+		System.out.println();
+		
+		System.out.println();
+		System.out.println("Max Sum Path");
+		mspTree = getMaxSumPathTree();
+		System.out.println(mspTree.getMaxSumPath());
+		System.out.println();
+		
+		
 		
 	}
+	
+	private static BinaryTree getMaxSumPathTree(){
+		Node root = new Node(10);
+		 root.left = new Node(-2);
+		 root.right = new Node(7);
+		 root.left.left = new Node(8);
+		 root.left.right = new Node(-4);
+		 return new BinaryTree(root);
+	}
+	
+	
+	private static BinaryTree getMaxSumBetweenTwoLeavesTree(){
+		Node root = new Node(-15);
+		root.left = new Node(5);
+	    root.right = new Node(6);
+	    root.left.left = new Node(-8);
+	    root.left.right = new Node(1);
+	    root.left.left.left = new Node(2);
+	    root.left.left.right = new Node(6);
+	    root.right.left = new Node(3);
+	    root.right.right = new Node(9);
+	    root.right.right.right= new Node(0);
+	    root.right.right.right.left= new Node(4);
+	    root.right.right.right.right= new Node(-1);
+	    root.right.right.right.right.left= new Node(10);
+		return new BinaryTree(root);
+	}
+	
+	private static BinaryTree getVertexCoverTree(){
+		Node root = new Node(10);
+		root.left = new Node(20);
+		root.right = new Node(30);
+		root.left.left = new Node(40);
+		root.left.right = new Node(50);
+		root.left.right.left = new Node(70);
+		root.left.right.right = new Node(80);
+		root.right.right = new Node(60);
+		return new BinaryTree(root);
+	}
+	
+	private static BinaryTree getRemoveNodesBinaryTree(){
+		 	
+	    Node root = new Node(2);
+	    root.left        = new Node(7);
+	    root.right       = new Node(5);
+	    root.left.right = new Node(6);
+	    root.left.right.left=new Node(1);
+	    root.left.right.right=new Node(11);
+	    root.right.right=new Node(9);
+	    root.right.right.left=new Node(4);
+	    return new BinaryTree(root);
+		 
+	}
+	
+	
+	
 	
 	private static BinaryTree getPruneTree(){
 		Node root = new Node(1);
@@ -128,6 +235,8 @@ public class BinaryTreeTest {
 		public int height;
 		public int vd;
 		public int hd;
+		public int vcCount;
+		public boolean isThreaded;
 		
 		public Node(){
 			this.data= -1;
@@ -136,6 +245,8 @@ public class BinaryTreeTest {
 			this.height =1;
 			this.vd=-1;
 			this.hd=-1;
+			this.vcCount =-1;
+			this.isThreaded = false;
 		}
 		
 		public Node(int data){
@@ -145,6 +256,19 @@ public class BinaryTreeTest {
 			this.height =1;
 			this.vd=-1;
 			this.hd=-1;
+			this.vcCount = -1;
+			this.isThreaded = false;
+		}
+		
+		public Node(char ch){
+			this.data= ch;
+			this.left = null;
+			this.right = null;
+			this.height =1;
+			this.vd=-1;
+			this.hd=-1;
+			this.vcCount = -1;
+			this.isThreaded = false;
 		}
 		
 		public Node(Node temp){
@@ -154,6 +278,8 @@ public class BinaryTreeTest {
 			this.height =1;
 			this.vd=-1;
 			this.hd=-1;
+			this.vcCount = -1;
+			this.isThreaded = false;
 		}
 
 		public static Comparator<Node> nodeComparator = new Comparator<BinaryTreeTest.Node>() {
@@ -169,7 +295,13 @@ public class BinaryTreeTest {
 		private Node root;
 		private Queue<Integer> queue;
 		private Node listHead;
+		private Node reverseListHead;
 		private Node prev;
+		private Node next;
+		private String serializedForm = new String();
+		private int serializedIndex = 0;
+		private int result=0;
+		private int diameter = 0;
 		
 		private Node closestLeaf;
 		private int closestLeafDepth;
@@ -178,6 +310,7 @@ public class BinaryTreeTest {
 			this.root = null;
 			this.listHead = null;
 			this.prev =null;
+			this.reverseListHead = null;
 			this.closestLeaf = null;
 			this.closestLeafDepth = Integer.MAX_VALUE;
 			
@@ -187,6 +320,7 @@ public class BinaryTreeTest {
 			this.root = deepCopyUtil(root);
 			this.prev =null;
 			this.listHead = null;
+			this.reverseListHead = null;
 			this.closestLeaf = null;
 			this.closestLeafDepth = Integer.MAX_VALUE;
 		}
@@ -195,6 +329,7 @@ public class BinaryTreeTest {
 			this.root = consturctFullBinaryTreeFromArray(arr);
 			this.prev =null;
 			this.listHead = null;
+			this.reverseListHead = null;
 			this.closestLeaf = null;
 			this.closestLeafDepth = Integer.MAX_VALUE;
 			printInorderUtil(root);
@@ -210,6 +345,153 @@ public class BinaryTreeTest {
 			System.out.print(root.data+" ");
 			printInorderUtil(root.right);
 		}
+		
+		
+		
+		
+		/***
+		 * Max Sum to Leaf from Root
+		 */
+		
+		public int getMaxSumPath(){
+			return getMaxPathSumBetweenLeaves(root);
+		}
+		
+		private int getMaxSumPath(Node root){
+			if(root == null)
+				return 0;
+			int leftSum = getMaxPathSumBetweenLeaves(root.left);
+			int rightSum = getMaxPathSumBetweenLeaves(root.right);
+			
+			return root.data+Math.max(leftSum, rightSum);
+		}
+		
+		/***
+		 * Reverse Odd Levels of a Binary Tree
+		 */
+		
+		/***
+		 * Diameter of the Binary Tree
+		 */
+		public int getDiameter(){
+			return getDiameter(root);
+			
+		}
+		
+		private int height(Node current){
+			if(current==null)
+				return 0;
+			return 1+Math.max(height(current.left), height(current.right));
+		}
+		
+		private int getDiameter(Node root){
+			if(root == null)
+				return 0;
+			
+			int leftHeight = height(root.left);
+			int rightHeight = height(root.right);
+			
+			int leftMaxPathLength = getDiameter(root.left);
+			int rightMaxPathLength = getDiameter(root.right);
+			
+			return Math.max((leftHeight+rightHeight+1), Math.max(leftMaxPathLength,rightMaxPathLength));
+		}
+		
+		
+		/***
+		 * Maximum Path Sum between two leaves
+		 */
+		public int getMaxPathSumBetweenLeaves(){
+			
+			getMaxPathSumBetweenLeaves(root);
+			return result;
+		}
+		
+		public int getMaxPathSumBetweenLeaves(Node root){
+			if(root==null)
+				return 0;
+			int leftSum = getMaxPathSumBetweenLeaves(root.left);
+			int rightSum = getMaxPathSumBetweenLeaves(root.right);
+			
+			int curr_sum = Math.max((leftSum+rightSum+root.data), Math.max(leftSum,rightSum));
+			
+			if(curr_sum>result)
+				result = curr_sum;
+			
+			return Math.max(leftSum,rightSum)+root.data;
+		}
+		
+		
+		
+		/***
+		 * Vertex Cover of the Binary Tree
+		 */
+		public int getVertexCover(){
+			getVertexCover(root);
+			return root.vcCount;
+		}
+		
+		private int getVcCount(Node root){
+			if(root==null)
+				return 0;
+			else
+				return root.vcCount;
+		}
+		
+		private boolean getVertexCover(Node root){
+			if(root == null)
+				return false;
+			root.vcCount = 1;
+			boolean leftPresent = getVertexCover(root.left);
+			boolean rightPresent = getVertexCover(root.right);
+			
+			if(leftPresent && rightPresent){
+				root.vcCount = getVcCount(root.left) + getVcCount(root.right);
+				return false;
+			}
+			else{
+				if(root.left!=null || root.right!=null){
+					if(leftPresent){
+						root.vcCount+=getVcCount(root.left);
+					}
+					if(rightPresent){
+						root.vcCount+=getVcCount(root.right);
+					}
+					return true;
+				}
+				else
+					return false;
+				
+			}	
+		}
+		
+		/***
+		 * Check if two nodes are cousins
+		 */
+		
+		public boolean areCousins(int val1, int val2){
+			boolean found = false;
+			Stack<Node> path1 = new Stack<BinaryTreeTest.Node>();
+			Stack<Node> path2 = new Stack<BinaryTreeTest.Node>();
+			found = findNodeUtil(root, val1, path1);
+			if(!found)
+				return false;
+			found = findNodeUtil(root, val2, path2);
+			if(!found)
+				return false;
+			
+			if(path1.size() == path2.size()){
+				path1.pop();path2.pop();
+				if(path1.peek().data != path2.peek().data)
+					return true;
+			}
+			
+			return false;
+				
+			
+		}
+		
+		
 		
 		
 		
@@ -236,6 +518,136 @@ public class BinaryTreeTest {
 			prev = root;
 			getLinkedListUtil(root.right);
 		}
+		
+		/***
+		 * Converts the tree into a Reverse Linked List with the ListHead pointer pointing to the Last node of the List
+		 */
+		
+		public Node reverseLinkedList(){
+			reverseLinkedList(root);
+			return this.reverseListHead;
+		}
+		
+		private void reverseLinkedList(Node current){
+			if(current == null)
+				return;
+			reverseLinkedList(current.right);
+			if(next==null){
+				this.reverseListHead = current;
+			}
+			else{
+				next.left = current;
+				current.right = next;
+			}
+			next = current;
+			reverseLinkedList(current.left);
+		}
+		
+		
+		/***
+		 * Get Threaded Binary Tree
+		 */
+		public BinaryTree getThreadedBinaryTree(){
+			this.prev = null;
+			BinaryTree clone = this.clone();
+			convertToThreadedBinary(clone.root);
+			return clone;
+		}
+		
+		private void convertToThreadedBinary(Node current){
+			if(current == null)
+				return;
+			convertToThreadedBinary(current.left);
+			if(prev == null){
+				prev = current;
+			}
+			else{
+				if(prev.right == null){
+					prev.right = current;
+					prev.isThreaded = true;
+				}
+			}
+			prev = current;
+			convertToThreadedBinary(current.right);
+		}
+		
+		
+		/***
+		 * Serialize a Binary Tree
+		 */
+		public String serialize(){
+			this.serializedForm = new String();
+			StringBuilder builder = new StringBuilder(this.serializedForm);
+			serialize(root,builder);
+			this.serializedForm = builder.toString();
+			return this.serializedForm;
+			
+		}
+		
+		private void serialize(Node current, StringBuilder builder){
+			if(current==null){
+				builder.append(-1+",");
+				return;
+			}
+			builder.append(current.data+",");
+			serialize(current.left, builder);
+			serialize(current.right, builder);
+		}
+		
+		/***
+		 * Deserialize Binary Tree
+		 */
+		public BinaryTree deserialize(String serializedForm){
+			String[] parts = serializedForm.split(",");
+			Node newRoot = deserialize(parts);
+			BinaryTree newTree = new BinaryTree(newRoot);
+			newTree.printInorder();
+			return newTree;
+			
+		}
+		
+		private Node deserialize(String[] serializedForm){
+			if(Integer.parseInt(serializedForm[serializedIndex]) == -1){
+				serializedIndex++;
+				return null;
+			}
+			Node root = new Node(Integer.parseInt(serializedForm[serializedIndex++]));
+			root.left = deserialize(serializedForm);
+			root.right= deserialize(serializedForm);
+			
+			return root;
+		}
+		
+		
+		
+		/***
+		 * Remove Nodes with a Single Child
+		 */
+		
+		public void removeHalfNodes(){
+			this.root = removehalfNodesUtil(this.root);
+			printInorder();
+		}
+		
+		private Node removehalfNodesUtil(Node root){
+			if(root==null)
+				return null;
+			root.left = removehalfNodesUtil(root.left);
+			root.right = removehalfNodesUtil(root.right);
+			if(root.left==null && root.right==null){
+				return root;
+			}
+			else if(root.left!=null && root.right!=null){
+				return root;
+			}
+			else{
+				if(root.left!=null)
+					return root.left;
+				else
+					return root.right;
+			}
+		}
+		
 		
 		/***
 		 * Diagonal Sum
@@ -315,7 +727,10 @@ public class BinaryTreeTest {
 	        {
 	        	Node temp = queue.remove();
 	            hd = temp.hd;
-	            map.put(hd, temp.data);
+	            //if(!map.containsKey(hd))
+	            	map.put(hd, temp.data);
+	            
+	            
 	            if (temp.left != null)
 	            {
 	                temp.left.hd = hd-1;
@@ -344,6 +759,27 @@ public class BinaryTreeTest {
 	        }
 	    }
 		
+		public void bottomViewRecur(){
+			Map<Integer, Integer> map = new TreeMap<Integer, Integer>();
+			bottomViewRecur(root, map, 0);
+			Collection<Integer> topViewColl = map.values();
+			System.out.println();
+			System.out.println("Bottom View of the Binary Tree");
+			for(int val:topViewColl){
+				System.out.print(val+" ");
+			}
+			
+		}
+		
+		private void bottomViewRecur(Node root,Map<Integer, Integer> map, int hd){
+			if(root==null)
+				return;
+			root.hd = hd;
+			map.put(hd, root.data);
+			bottomViewRecur(root.left, map, hd-1);
+			bottomViewRecur(root.right, map, hd+1);	
+		}
+		
 		/***
 		 * Inorder Predecessor and Successor
 		 */
@@ -354,7 +790,18 @@ public class BinaryTreeTest {
 			Node succ = new Node();
 			Node localPrev = new Node();
 			
-			boolean found = inorderPredecessorandSuccessor(root, prev, succ, key, localPrev);
+			Stack<Node> stack = new Stack<BinaryTreeTest.Node>();
+			boolean found = findNodeUtil(root, key, stack);
+			if(found){
+				Node[] nodes = inorderPredecessorandSuccessor(stack.peek());
+				if(nodes[0]!=null)
+					System.out.println("Inorder Predecessor is "+nodes[0].data);
+				if(nodes[1]!=null)
+					System.out.println("Inorder Successor is "+nodes[1].data);
+				
+			}
+			
+			found = inorderPredecessorandSuccessor(root, prev, succ, key, localPrev);
 			if(found){
 				System.out.println();
 				System.out.println("Inorder Predecessor is "+prev.data);
@@ -364,6 +811,26 @@ public class BinaryTreeTest {
 				System.out.println("Given Key not present");
 			
 			return null;
+		}
+		
+		private Node[] inorderPredecessorandSuccessor(Node root){
+			Node prev = null;
+			Node succ = null;
+			if(root.left!=null){
+				prev = root.left;
+				while(prev.right!=null)
+					prev=prev.right;
+			}
+			
+			if(root.right!=null){
+				succ = root.right;
+				while(succ.left!=null)
+					succ = succ.left;
+			}
+			
+			return new Node[]{prev,succ};
+			
+			
 		}
 		
 		private boolean inorderPredecessorandSuccessor(Node root, Node prev, Node succ, int key, Node localPrev){
@@ -389,21 +856,22 @@ public class BinaryTreeTest {
 			return retVal;
 		}
 		
+		
 		/***
 		 * 
 		 * Returns a boolean value which determines if the binary tree is complete or not
 		 */
-		public boolean isCompleteBinaryTree(){
-			return isCompleteBinaryTree(this.root);
+		public boolean isfullBinaryTree(){
+			return isfullBinaryTree(this.root);
 		}
 		
-		private boolean isCompleteBinaryTree(Node root){
+		private boolean isfullBinaryTree(Node root){
 			if(root==null)
 				return true;
 			if(root.left==null && root.right==null)
 				return true;
 			if(root.left!=null && root.right!=null){
-				return (isCompleteBinaryTree(root.left) && isCompleteBinaryTree(root.right));
+				return (isfullBinaryTree(root.left) && isfullBinaryTree(root.right));
 			}
 			return false;
 		}

@@ -4,7 +4,7 @@ public class EditDistance {
 
 	public static void main(String[] args) {
 		String X = "ABC";
-		String Y = "AXCD";
+		String Y = "XYZ";
 		System.out.println("Min Edits to convert "+X+" into "+ Y+" is "+editDistance(X, Y));
 	}
 	

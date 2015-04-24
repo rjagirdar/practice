@@ -12,6 +12,7 @@ public abstract class Graph {
 	protected int V;
 	protected TreeMap<Integer, SortedList<Integer>> adjList;
 	private TreeSet<Integer> verticesSet;
+	
 	private boolean weighted;
 	
 	
@@ -31,6 +32,8 @@ public abstract class Graph {
 			this.verticesSet.add(i);
 		}
 	}
+	
+	
 	
 	public void addEdge(int src, int dest){
 		SortedList<Integer> list = null;
@@ -65,24 +68,40 @@ public abstract class Graph {
 	 */
 	public void DFS() {
 		boolean[] visited = new boolean[this.V];
+		int numOfComponents = 0;
+		Queue<Integer> firstVisited = new LinkedList<Integer>();
+		Queue<Integer> firstFinished = new LinkedList<Integer>();
 		for(int i=0; i<this.V; i++){
-			if(!visited[i])
-				DFS(i,visited);
+			if(!visited[i]){
+				numOfComponents+=1;
+				DFS(i,visited, firstVisited, firstFinished);
+			}
 		}
-		
-		
+		DFSPrintUtil(numOfComponents,firstVisited, firstFinished);
 	}
 	
-	private void DFS(int vertex, boolean[] visited){
+	private void DFSPrintUtil(int numOfComponents,Queue<Integer> firstVisited, Queue<Integer> firstFinished){
+		System.out.println();
+		System.out.println("No. Of Components : "+numOfComponents);
+		System.out.println("===========================");
+		System.out.println("Vertices were visited in this order");
+		for(int vertex : firstVisited)
+			System.out.print(vertex+" ");
+		System.out.println();
+		System.out.println("Vertices were finished in this order");
+		for(int vertex : firstFinished)
+			System.out.print(vertex+" ");
+	}
 	
-		System.out.print(vertex+" ");
+	private void DFS(int vertex, boolean[] visited, Queue<Integer> firstVisited, Queue<Integer> firstFinished){
+		firstVisited.add(vertex);
 		visited[vertex] = true;
 		for(int adjVertex : this.adjList.get(vertex)){
 			if(!visited[adjVertex]){
-				DFS(adjVertex,visited);
+				DFS(adjVertex,visited, firstVisited, firstFinished);
 			}
 		}
-		
+		firstFinished.add(vertex);
 	}
 	
 	public void BFS(){
@@ -113,6 +132,7 @@ public abstract class Graph {
 	}
 	
 	public abstract boolean isCyclic();
+	public abstract boolean hasPath(int src, int dest);
 	
 	
 }

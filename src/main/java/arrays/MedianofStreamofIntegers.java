@@ -8,7 +8,7 @@ public class MedianofStreamofIntegers {
 	 
 	
 	public static void main(String[] args) {
-		int[] arr = {5,15,3};
+		int[] arr = {5,15,3,9};
 		System.out.println(getMedian(arr));
 	}
 	

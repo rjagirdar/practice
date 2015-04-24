@@ -15,6 +15,7 @@ import com.google.common.collect.Lists;
 
 import bst.BinarySearchTreeTest.BinarySearchTree.TraversalType;
 
+
 public class BinarySearchTreeTest {
 
 	public static void main(String[] args) {
@@ -84,8 +85,23 @@ public class BinarySearchTreeTest {
 		}
 		System.out.println();
 		
+		BinarySearchTree sumTree = getSumTreeExample();
+		sumTree.convertToGreaterSumTree();
 		
 		
+		
+	}
+	
+	private static BinarySearchTree getSumTreeExample(){
+		Node root = new Node(11);
+		root.left = new Node(2);
+	    root.right = new Node(29);
+	    root.left.left = new Node(1);
+	    root.left.right = new Node(7);
+	    root.right.left = new Node(15);
+	    root.right.right = new Node(40);
+	    root.right.right.left = new Node(35);
+	    return new BinarySearchTree(root);
 	}
 	
 	public static class Node{
@@ -117,6 +133,7 @@ public class BinarySearchTreeTest {
 		private Node listhead;
 		private Node predecessor;
 		private boolean isThreadedBinary;
+		private int sum =0;
 		
 		public BinarySearchTree(){
 			root = null;
@@ -170,6 +187,46 @@ public class BinarySearchTreeTest {
 				this.root = this.buildINPOST(array);
 			}
 		}
+		
+		public void printInorder(){
+			printInorderUtil(root);
+		}
+		private void printInorderUtil(Node root){
+			if(root == null)
+				return;
+			printInorderUtil(root.left);
+			System.out.print(root.data+" ");
+			printInorderUtil(root.right);
+		}
+		
+		/***
+		 * convert to greater sum tree
+		 * 
+		 */
+		public void convertToGreaterSumTree(){
+			convertToGreaterSumTree(root,0, false);
+			System.out.println();
+			System.out.println("Convert to Greater Sum Tree");
+			printInorder();
+			System.out.println();
+		}
+		
+		private int convertToGreaterSumTree(Node root, int sum, boolean isLeft){
+			if(root==null)
+				return 0;
+			int rightSum = convertToGreaterSumTree(root.right, sum, false);
+			int temp = root.data;
+			int current_sum = rightSum+sum;
+			root.data = rightSum+sum;
+			
+			int leftSum = convertToGreaterSumTree(root.left, current_sum+temp, true);
+			if(isLeft){
+				return temp+leftSum;
+			}
+			return current_sum+leftSum+temp;
+		}
+		
+		
 		
 		public int size(){
 			return sizeUtil(root);

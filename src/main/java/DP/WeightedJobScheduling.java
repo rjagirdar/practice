@@ -83,7 +83,8 @@ public class WeightedJobScheduling {
 			
 			profitTable[i] = Math.max(incl_profit, excl_profit);
 		}
-		
+		for(int i=1; i<=jobs.size(); i++)
+			System.out.print(profitTable[i]+" ");
 		
 		return profitTable[jobs.size()];
 	}

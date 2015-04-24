@@ -8,6 +8,7 @@ public class SlidingWindowMax {
 	public static void main(String[] args) {
 		int[] arr = {1,2,3,1,4,5,2,3,6};
 		int k=3;
+		slidingWindow(arr, k);
 	}
 	
 	private static void slidingWindow(int[] arr, int k){
@@ -21,8 +22,17 @@ public class SlidingWindowMax {
 		}
 		
 		for(;i<arr.length; i++){
-			System.out.println();
+			System.out.println(arr[queue.peekFirst()]);
+			
+			while(!queue.isEmpty() && queue.peekFirst()<=i-k)
+				queue.pollFirst();
+			
+			while(!queue.isEmpty() && arr[i] >= arr[queue.peekLast()])
+				queue.pollLast();
+			queue.addLast(i);
 		}
+		
+		System.out.println(arr[queue.peekFirst()]);
 		
 	}
 

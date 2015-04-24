@@ -3,9 +3,9 @@ package DP;
 public class CoinChangeTest {
 
 	public static void main(String[] args) {
-		int[] coins = {3,5,10};
+		int[] coins = {1,2,3};
 		CoinChange cc = new CoinChange(coins);
-		System.out.println(cc.numOfWays(13));
+		System.out.println(cc.numOfWays(6));
 	}
 	
 	private static class CoinChange{

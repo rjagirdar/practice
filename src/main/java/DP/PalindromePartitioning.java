@@ -3,7 +3,8 @@ package DP;
 public class PalindromePartitioning {
 
 	public static void main(String[] args) {
-		String str = "bhavana";
+		String str = "ississi";
+		str = "abcb";
 		System.out.println(minCutsNeeded(str));
 	}
 	

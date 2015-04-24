@@ -17,29 +17,60 @@ public class ReverseDNSLookup {
 
 	}
 		
-	private static class Trie<T extends Iterable<?>>{
-		private TrieNode<T> root;
+	private static class TrieNode{
+		private char ch;
+		private TreeMap<Character, TrieNode> map = null;
+		private boolean isEnd;
 		
-		public Trie(){
-			this.root = new TrieNode<T>();
+		public TrieNode(){
+			ch=' ';
+			map = new TreeMap<Character, ReverseDNSLookup.TrieNode>();
+			isEnd = false;
 		}
 		
+		public TrieNode(char ch){
+			this.ch = ch;
+			map = new TreeMap<Character, ReverseDNSLookup.TrieNode>();
+			isEnd = false;
+		}
 		
+		public void insert(TrieNode node){
+			if (!this.map.containsKey(node.ch)) {
+				this.map.put(node.ch, node);
+			}
+		}
 		
 	}
 	
-	private static class TrieNode<K>{
-		private K k;
-		private TreeMap<K, TrieNode<K>> map = new TreeMap<K, ReverseDNSLookup.TrieNode<K>>();
+	private static class Trie{
+		private TrieNode root;
 		
-		public TrieNode(){
-			k= null;
-			this.map = new TreeMap<K, ReverseDNSLookup.TrieNode<K>>();
+		public Trie(){
+			this.root = new TrieNode();
 		}
 		
-		public void addChild(K val){
+		public void insert(String str){
+			
+			TrieNode current = root;
+			TrieNode newNode = null;
+			for(int i=0; i<str.length(); i++){
+				char ch = str.charAt(i);
+				if(!current.map.containsKey(ch)){
+					newNode = new TrieNode(ch);
+					current.insert(newNode);
+				}
+				else{
+					newNode = current.map.get(ch);
+				}
+				current = newNode;
+				if(i==str.length()-1)
+					newNode.isEnd = true;
+				
+			}
 			
 		}
 	}
+	
+	
 
 }
