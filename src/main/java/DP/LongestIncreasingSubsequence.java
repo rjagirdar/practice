@@ -39,10 +39,10 @@ public class LongestIncreasingSubsequence {
 	}
 	
 	private static int ceil(int[] arr, int[] tailIndices, int l, int r, int key){
-		if(arr[l]>key)
+		/*if(arr[l]>key)
 			return l;
 		if(arr[r]<key)
-			return -1;
+			return -1;*/
 		
 		while(r-l>1){
 			int mid = l+(r-l)/2;
@@ -51,7 +51,7 @@ public class LongestIncreasingSubsequence {
 			else
 				l=mid;
 		}
-		if(arr[l]>key)
+		if(arr[tailIndices[l]]>key)
 			return l;
 		else
 			return r;
@@ -81,6 +81,16 @@ public class LongestIncreasingSubsequence {
 				}
 			}
 		}
+		
+		for (int i=0; i<arr.length; i++){
+			System.out.print(tailIndices[i]+"  ");
+		}
+		System.out.println();
+		for (int i=0; i<arr.length; i++){
+			System.out.print(prevIndices[i]+"  ");
+		}
+		System.out.println();
+		System.out.println("=========================================");
 		
 		for(int i=tailIndices[len-1]; i>=0; i=prevIndices[i]){
 			System.out.print(arr[i]+" ");

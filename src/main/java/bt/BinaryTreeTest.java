@@ -132,6 +132,12 @@ public class BinaryTreeTest {
 		System.out.println(mspTree.getMaxSumPath());
 		System.out.println();
 		
+		System.out.println();
+		System.out.println("Is Complete Binary Tree");
+		tree = getCompleteBinaryTree();
+		System.out.println("Is Complete Binary Tree:"+tree.isCompleteBinaryTree());
+		System.out.println();
+		
 		
 		
 	}
@@ -187,6 +193,18 @@ public class BinaryTreeTest {
 	    root.right.right.left=new Node(4);
 	    return new BinaryTree(root);
 		 
+	}
+	
+	private static BinaryTree getCompleteBinaryTree(){
+		Node root = new Node(1);
+		root.left = new Node(2);
+		root.right = new Node(3);
+		
+		root.left.left = new Node(4);
+		root.left.right = new Node(5);
+		
+		root.right.right = new Node(6);
+		return new BinaryTree(root);
 	}
 	
 	
@@ -855,6 +873,31 @@ public class BinaryTreeTest {
 			
 			return retVal;
 		}
+		
+		public int size(){
+			return sizeUtil(this.root);
+		}
+		
+		private int sizeUtil(Node root){
+			if(root == null)
+				return 0;
+			return 1+sizeUtil(root.left)+sizeUtil(root.right);
+		}
+		
+		public boolean isCompleteBinaryTree(){
+			int size = this.size();
+			return isCompleteBinaryTreeUtil(this.root, size, 0);
+		}
+		
+		private boolean isCompleteBinaryTreeUtil(Node root, int size, int index){
+			if(root == null)
+				return true;
+			if(index<size && isCompleteBinaryTreeUtil(root.left, size, 2*index+1) && isCompleteBinaryTreeUtil(root.right, size, 2*index+2))
+				return true;
+			return false;
+		}
+		
+		
 		
 		
 		/***

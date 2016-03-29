@@ -3,7 +3,7 @@ package arrays;
 public class MinLengthSquare {
 
 	public static void main(String[] args) {
-		System.out.println(ml(18));
+		System.out.println(ml(11));
 	}
 	
 	private static boolean isSquare(int n){

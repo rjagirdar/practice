@@ -3,7 +3,7 @@ package DP;
 public class CountNumberofBinaryStrings {
 
 	public static void main(String[] args) {
-		int n = 4;
+		int n = 2;
 		countBinaryStringWithNoConsecutiveOnes(n);
 	}
 	

@@ -7,7 +7,8 @@ public class LongestCommonSubSequence {
 	public static void main(String[] args) {
 		String a = "AGGTAB";
 		String b = "GTXAYB";
-		System.out.println(lcSubString(a, b));
+		//System.out.println(lcSubString(a, b));
+		System.out.println(lcSubsequence(a,b));
 	}
 	
 	private static void printTable(int[][] table){

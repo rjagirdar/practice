@@ -6,7 +6,7 @@ public class HeightofTreeFromParentArray {
 
 	public static void main(String[] args) {
 		int[] parent = {1,5,5,2,2,-1,3};
-		parent = new int[]{-1, 0, 0, 1, 1, 3, 5};
+		//parent = new int[]{-1, 0, 0, 1, 1, 3, 5};
 		System.out.println(depth(parent));
 	}
 	

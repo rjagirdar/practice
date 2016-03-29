@@ -6,7 +6,7 @@ public class DuplicatesWithinKDistance {
 
 	public static void main(String[] args) {
 		int[] arr = {1,2,1,4,1,2,3,4};
-		int k = 3;
+		int k = 2;
 		System.out.println(checkDuplicates(arr, k));
 		
 	}

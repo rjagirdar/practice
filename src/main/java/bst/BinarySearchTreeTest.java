@@ -88,8 +88,61 @@ public class BinarySearchTreeTest {
 		BinarySearchTree sumTree = getSumTreeExample();
 		sumTree.convertToGreaterSumTree();
 		
+		BinarySearchTree[] trees = getCommonNodeTestTrees();
+		BinarySearchTree.findCommon(trees[0], trees[1]);
+		
+		System.out.println();
+		System.out.println("=======TTB===========");
+		BinarySearchTree ttb = getBST();
+		ttb.printInorder();
+		ttb.getThreadedBinaryTree();
+		
+		System.out.println();
+		System.out.println("=======Kth Largest===========");
+		tree = getBST();
+		for(int k=1; k<9; k++){
+			System.out.println(k +"th largest Element is "+tree.kthLargestNode(k));
+		}
 		
 		
+		
+		
+	}
+	
+	private static BinarySearchTree getBST(){
+		Node root = new Node(20);
+		root.left = new Node(8);
+		root.right = new Node(22);
+		root.left.left = new Node(4);
+		//root.left.left.right = new Node(5);
+		//root.left.left.right.right = new Node(6);
+		
+		root.left.right = new Node(12);
+		root.left.right.left = new Node(10);
+		root.left.right.right = new Node(14);
+		return new BinarySearchTree(root, false);
+	}
+	
+	private static BinarySearchTree[] getCommonNodeTestTrees(){
+		BinarySearchTree[] trees = new BinarySearchTree[2];
+		
+		Node root1 = new Node(5);
+		root1.left = new Node(1);
+		root1.right = new Node(10);
+		root1.left.left = new Node(0);
+		root1.left.right = new Node(4);
+		root1.right.left = new Node(7);
+		root1.right.left.right = new Node(9);
+		trees[0] = new BinarySearchTree(root1);
+		
+		Node root2 = new Node(10);
+		root2.left = new Node(7);
+		root2.right = new Node(20);
+		root2.left.left = new Node(4);
+		root2.left.right = new Node(9);
+		root2.left.left.left = new Node(0);
+		trees[1] = new BinarySearchTree(root2);
+		return trees;
 	}
 	
 	private static BinarySearchTree getSumTreeExample(){
@@ -134,6 +187,8 @@ public class BinarySearchTreeTest {
 		private Node predecessor;
 		private boolean isThreadedBinary;
 		private int sum =0;
+		private int count = 0;
+		private Node kthLargest;
 		
 		public BinarySearchTree(){
 			root = null;
@@ -142,6 +197,7 @@ public class BinarySearchTreeTest {
 			this.listhead = null;
 			this.predecessor = null;
 			this.isThreadedBinary = false;
+			this.kthLargest = null;
 		}
 		
 		public BinarySearchTree(Node root){
@@ -151,6 +207,7 @@ public class BinarySearchTreeTest {
 			this.listhead = null;
 			this.predecessor = null;
 			this.isThreadedBinary = false;
+			this.kthLargest = null;
 		}
 		
 		public BinarySearchTree(Node root, boolean isThreadedBinary){
@@ -160,6 +217,7 @@ public class BinarySearchTreeTest {
 			this.listhead = null;
 			this.predecessor = null;
 			this.isThreadedBinary = isThreadedBinary;
+			this.kthLargest = null;
 		}
 		
 		public BinarySearchTree(int[] arr1, TraversalType arr1Type, int[] arr2, TraversalType arr2Type){
@@ -168,6 +226,7 @@ public class BinarySearchTreeTest {
 			this.listhead = null;
 			this.predecessor = null;
 			this.isThreadedBinary = false;
+			this.kthLargest = null;
 			if(arr1Type== TraversalType.INORDER && arr2Type == TraversalType.PREORDER){
 				this.root = buildINPRE(arr1, arr2, 0, arr1.length-1);
 			}
@@ -227,6 +286,48 @@ public class BinarySearchTreeTest {
 		}
 		
 		
+		public static void findCommon(BinarySearchTree tree1, BinarySearchTree tree2){
+			Stack<Node> st1 = new Stack<BinarySearchTreeTest.Node>();
+			Stack<Node> st2 = new Stack<BinarySearchTreeTest.Node>();
+			Node root1 = tree1.root;
+			Node root2 = tree2.root;
+			System.out.println("=======Find Common Nodes============");
+			while(true){
+				while(root1!=null){
+					st1.push(root1);
+					root1=root1.left;
+				}
+				
+				while(root2!=null){
+					st2.push(root2);
+					root2=root2.left;
+				}
+				
+				if(st1.isEmpty() || st2.isEmpty()){
+					break;
+				}
+				
+				Node n1 = st1.peek();
+				Node n2 = st2.peek();
+				
+				if(n1.data == n2.data){
+					System.out.print(n1.data+" ");
+					st1.pop();st2.pop();
+					root1=n1.right;
+					root2=n2.right;
+				}
+				else if(n1.data < n2.data){
+					st1.pop();
+					root1=n1.right;
+				}
+				else{
+					st2.pop();
+					root2=n2.right;
+				}
+			}
+		}
+		
+		
 		
 		public int size(){
 			return sizeUtil(root);
@@ -237,6 +338,32 @@ public class BinarySearchTreeTest {
 				return 0;
 			return sizeUtil(root.left)+sizeUtil(root.right)+1;
 		}
+		
+		public int kthLargestNode(int k){
+			this.kthLargest = null;
+			this.count = 1;
+			kthLargestNodeUtil(this.root, k);
+			if(kthLargest!=null)
+				return kthLargest.data;
+			else
+				return -1;
+		}
+		
+		private void kthLargestNodeUtil(Node current, int k){
+			if(current == null)
+				return;
+			if(this.kthLargest !=null)
+				return;
+			
+			kthLargestNodeUtil(current.right, k);
+			if(this.count == k){
+				this.kthLargest = current;
+			}
+			this.count +=1;
+			kthLargestNodeUtil(current.left, k);
+		}
+		
+		
 		
 		
 		
@@ -406,11 +533,22 @@ public class BinarySearchTreeTest {
 			
 		}
 		
-		public BinarySearchTree getThreadedBinaryTree(){
+		public int countSubtreesWithinRange(int low, int high){
+			
+			return -1;
+		}
+		
+		private boolean countSubtreesUtil(Node current, int low, int high){
+			
+			return false;
+		}
+		
+		public void getThreadedBinaryTree(){
 			Node cloneRoot = cloneUtil(this.root);
 			getThreadedBinaryTreeUtil(cloneRoot);
 			BinarySearchTree tree = new BinarySearchTree(cloneRoot, true);
-			return tree;
+			inorderWithoutRecursionorStack(cloneRoot);
+			
 		}
 		
 		private void getThreadedBinaryTreeUtil(Node current){
@@ -423,6 +561,36 @@ public class BinarySearchTreeTest {
 			}
 			this.predecessor = current;
 			getThreadedBinaryTreeUtil(current.right);
+		}
+		
+		
+		
+		private void inorderWithoutRecursionorStack(Node current){
+			System.out.println();
+			if(current == null)
+				return;
+			
+			while(current.left!= null)
+				current = current.left;
+			
+			while(current!=null){
+				
+				if(current.left == null){
+					System.out.print(current.data+" ");
+					current = current.right;
+				}
+				else{
+					Node pre = current.left;
+					while(pre.right!=null && pre.right!=current){
+						pre = pre.right;
+					}
+					if(pre.right!=null){
+						pre.right = null;
+						System.out.print(current.data+" ");
+						current = current.right;
+					}
+				}
+			}
 		}
 		
 		

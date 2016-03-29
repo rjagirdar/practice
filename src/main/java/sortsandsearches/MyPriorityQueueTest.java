@@ -7,12 +7,14 @@ public class MyPriorityQueueTest {
 
 	public static void main(String[] args) {
 		int[] arr = {12, 3, 5, 7, 19,4,8,31,22,17,9,1,6,11,10,13,15,2};
+		//arr = new int[]{4,2,3,1};
 		MyPriorityQueue pq = new MyPriorityQueue(arr);
 		pq.printArray();
-		while(pq.hasNext()){
+		pq.printLevelOrder();
+		/*while(pq.hasNext()){
 			System.out.println(pq.extractMin());
 			
-		}
+		}*/
 	}
 	
 	

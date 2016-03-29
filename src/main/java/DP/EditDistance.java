@@ -3,8 +3,8 @@ package DP;
 public class EditDistance {
 
 	public static void main(String[] args) {
-		String X = "ABC";
-		String Y = "XYZ";
+		String X = "SUNDAY";
+		String Y = "SATURDAY";
 		System.out.println("Min Edits to convert "+X+" into "+ Y+" is "+editDistance(X, Y));
 	}
 	

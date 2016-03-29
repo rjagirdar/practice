@@ -3,7 +3,7 @@ package arrays;
 public class MissingNumberFromAP {
 
 	public static void main(String[] args) {
-		int[] arr = {2,4,6,8,10,12,14,16};
+		int[] arr = {2,4,6,10,12,14,16};
 		
 		System.out.println(missingNumber(arr));
 	}

@@ -7,7 +7,7 @@ public class CommonElement {
 	
 
 	public static void main(String[] args) {
-		 int[][] mat = { 	{1, 2, 3, 4, 5},
+		 int[][] mat = { 	{1, 2, 3, 5, 6},
                  			{2, 4, 5, 8, 10},
                  			{3, 5, 7, 9, 11},
                  			{1, 3, 5, 7, 9},

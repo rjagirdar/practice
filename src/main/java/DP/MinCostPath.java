@@ -7,6 +7,16 @@ public class MinCostPath {
 		System.out.println(minCost(costs));
 	}
 	
+	private static void printTable(int[][] table){
+		for (int i = 0; i < table.length; i++) {
+		    for (int j = 0; j < table[0].length; j++) {
+		        System.out.print(table[i][j] + "   ");
+		    }
+		    System.out.print("\n");
+		}
+		System.out.println("====================================================");
+	}
+	
 	private static int minCost(int[][] cost){
 		int[][] table = new int[cost.length][cost[0].length];
 		
@@ -24,6 +34,9 @@ public class MinCostPath {
 				table[i][j] = cost[i][j] + Math.min(Math.min(table[i][j-1], table[i-1][j]), table[i-1][j-1]);
 			}
 		}
+		
+		printTable(table);
+		
 		return table[table.length-1][table[0].length-1];
 	}
 
